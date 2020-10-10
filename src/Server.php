@@ -26,11 +26,8 @@ class Server
     /**
      * 构造函数
      */
-    public function __construct(protected int $size, protected array $config)
+    public function __construct(protected int $size, protected array $config, protected string|callback $constructor)
     {
-        if (!isset($config['handle'])) {
-            throw new RuntimeException('missing "handle" in server pool config');
-        }
         $this->channel = new Channel($size);
         $this->number = new Atomic();
         $this->fill();
@@ -109,13 +106,13 @@ class Server
     {
         $this->number->add();
         try {
-            $handle = $this->config['handle'];
-            if (is_callable($handle)) {
-                $conn = $handle($this->config);
-            } else if (is_string($handle) && class_exists($handle)) {
-                $conn = new $handle($this->config);
+            $constructor = $this->constructor;
+            if (is_string($constructor) && class_exists($constructor)) {
+                $conn = new $constructor($this->config);
+            } else if (is_callable($constructor)) {
+                $conn = $constructor($this->config);
             } else {
-                throw new RuntimeException('error handle in pool');
+                throw new RuntimeException('error pool constructor');
             }
         } catch (Throwable $th) {
             $this->number->sub();

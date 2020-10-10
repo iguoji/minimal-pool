@@ -19,7 +19,7 @@ class Cluster
     /**
      * 构造函数
      */
-    public function __construct(array $configs)
+    public function __construct(array $configs, string|callable $constructor)
     {
         $configs = Arr::array_merge_recursive_distinct($this->getDefaultConfigStruct(), $configs);
         $defaultConfig = $configs['default'];
@@ -29,7 +29,7 @@ class Cluster
             $poolSize = (int) floor($poolSize / $workerNum);
             if ($poolSize > 0) {
                 $groupConfigs = array_map(fn($config) => array_merge($defaultConfig, $config), $groupConfigs ?: [$defaultConfig]);
-                $this->groups[$groupName] = new Group($poolSize, $groupConfigs);
+                $this->groups[$groupName] = new Group($poolSize, $groupConfigs, $constructor);
             }
         }
     }

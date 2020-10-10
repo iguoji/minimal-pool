@@ -17,13 +17,13 @@ class Group
     /**
      * 构造函数
      */
-    public function __construct(int $size, array $configs)
+    public function __construct(int $size, array $configs, string|callable $constructor)
     {
         $avg = floor($size / count($configs));
         $remainder = $size % count($configs);
         foreach ($configs as $key => $config) {
             $poolSize = array_key_first($configs) == $key ? $avg + $remainder : $avg;
-            $this->servers[$key] = new Server((int) $poolSize, $config);
+            $this->servers[$key] = new Server((int) $poolSize, $config, $constructor);
         }
     }
 
