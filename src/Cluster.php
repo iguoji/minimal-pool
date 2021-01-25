@@ -21,14 +21,22 @@ class Cluster
      */
     public function __construct(array $configs, string|callable $constructor)
     {
+        // 合并默认配置
         $configs = Arr::array_merge_recursive_distinct($this->getDefaultConfigStruct(), $configs);
+        // 用户默认配置
         $defaultConfig = $configs['default'];
+        // 工作进程数量 -
         $workerNum = $configs['worker_num'];
+        // 循环集群分组
         foreach ($configs['cluster'] as $groupName => $groupConfigs) {
+            // 分组连接数量
             $poolSize = $configs['pool'][$groupName] ?? 0;
+            // 每个分组按工作进程均分连接数
             $poolSize = (int) floor($poolSize / $workerNum);
             if ($poolSize > 0) {
+                // 分组配置
                 $groupConfigs = array_map(fn($config) => array_merge($defaultConfig, $config), $groupConfigs ?: [$defaultConfig]);
+                // 分组对象
                 $this->groups[$groupName] = new Group($poolSize, $groupConfigs, $constructor);
             }
         }

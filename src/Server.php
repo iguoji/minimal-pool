@@ -25,11 +25,16 @@ class Server
 
     /**
      * 构造函数
+     * @param $size     int     当前服务器最大连接数
+     * @param $config   array   当前服务器的配置
      */
     public function __construct(protected int $size, protected array $config, protected string|callback $constructor)
     {
+        // 通道
         $this->channel = new Channel($size);
+        // 计数
         $this->number = new Atomic();
+        // 填充连接
         $this->fill();
     }
 
@@ -69,6 +74,7 @@ class Server
      */
     public function put(mixed $conn) : void
     {
+        $conn->release();
         $bool = $this->channel->push($conn, $this->config['options']['timeout'] ?? 2);
         if (!$bool) {
             throw new RuntimeException('put connection timeout');
