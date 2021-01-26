@@ -1,11 +1,11 @@
 {
     "name": "iguoji/minimal-pool",
+    "type": "library",
     "description": "php connection pool",
     "keywords": ["pool", "connection pool"],
     "homepage": "https://github.com/iguoji/minimal-pool",
     "require": {
-        "php": ">=8.0.0",
-        "iguoji/minimal-support": "dev-master"
+        "php": ">=8.0.0"
     },
     "autoload": {
         "psr-4": {
