@@ -50,7 +50,7 @@ class Cluster
         return [
             'worker_num'    =>  1,
             'pool'          =>  [
-                'master'    =>  150,
+                'master'    =>  140,
                 'slave'     =>  0,
             ],
             'default'       =>  [],
